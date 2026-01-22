@@ -4,128 +4,75 @@ Este projeto implementa um chatbot de clima no Telegram, desenvolvido no n8n, qu
 
 📌 Funcionalidades
 
-Integração Nativa: Conectado diretamente com o Telegram Bot API.
-
-Dados em Tempo Real: Consulta climática via OpenWeather.
-
-NLP (Processamento de Linguagem Natural): Uso de IA Gemini para respostas amigáveis e naturais.
-
-Normalização Automática: Validação de entrada e tratamento de acentos/espaços.
-
-Segurança Territorial: Filtro de validação para cidades apenas dentro do Brasil (BR).
-
-Resiliência Total: Sistema de fallback determinístico caso a IA falhe ou as credenciais não estejam configuradas.
+•	Integração Nativa: Conectado diretamente com o Telegram Bot API.
+•	Dados em Tempo Real: Consulta climática via OpenWeather.
+•	NLP (Processamento de Linguagem Natural): Uso de IA Gemini para respostas amigáveis e naturais.
+•	Normalização Automática: Validação de entrada e tratamento de acentos/espaços.
+•	Segurança Territorial: Filtro de validação para cidades apenas dentro do Brasil (BR).
+•	Resiliência Total: Sistema de fallback determinístico caso a IA falhe ou as credenciais não estejam configuradas.
 
 📂 Estrutura do Workflow
 
 O fluxo principal do workflow segue estas etapas lógicas:
-
-Telegram Trigger: Inicia o fluxo ao receber mensagens enviadas ao bot.
-
-Configurações Iniciais: Centraliza a chave da API (OpenWeather) para fácil manutenção e segurança.
-
-Captura e Formatação: Cria a variável queue e normaliza o texto (remove acentos, espaços e converte para minúsculas).
-
-OpenWeather HTTP Request: Realiza a chamada técnica para a API de clima usando Query Parameters.
-
-IF Sucesso: Verifica se a cidade foi encontrada (Status 200) e se pertence ao território brasileiro (BR).
-
-Extração e Fallback: Prepara a mensagem padrão arredondada e determinística.
-
-IA Gemini: Refina a mensagem técnica em uma saudação calorosa (se configurado).
-
-Enviar Resposta: Entrega a mensagem final ao usuário via Telegram, tratando possíveis tags incompatíveis.
+1.	Telegram Trigger: Inicia o fluxo ao receber mensagens enviadas ao bot.
+2.	Configurações Iniciais: Centraliza a chave da API (OpenWeather) para fácil manutenção e segurança.
+3.	Captura e Formatação: Cria a variável queue e normaliza o texto (remove acentos, espaços e converte para minúsculas).
+4.	OpenWeather HTTP Request: Realiza a chamada técnica para a API de clima usando Query Parameters.
+5.	IF Sucesso: Verifica se a cidade foi encontrada (Status 200) e se pertence ao território brasileiro (BR).
+6.	Extração e Fallback: Prepara a mensagem padrão arredondada e determinística.
+7.	IA Gemini: Refina a mensagem técnica em uma saudação calorosa (se configurado).
+8.	Enviar Resposta: Entrega a mensagem final ao usuário via Telegram, tratando possíveis tags incompatíveis.
 
 🚀 Como importar no n8n
 
-Acesse o painel do seu n8n.
-
-Vá em Workflows -> Import from file.
-
-Selecione o arquivo workflow-telegram-chatbot.json deste repositório.
-
-Clique em Save.
+1.	Acesse o painel do seu n8n.
+2.	Vá em Workflows -> Import from file.
+3.	Selecione o arquivo workflow-telegram-chatbot.json deste repositório.
+4.	Clique em Save.
 
 🔐 Configuração das Credenciais
 
 1. Telegram Bot (via BotFather)
 
 Para criar seu bot e obter o token:
-
-No Telegram, converse com o @BotFather.
-
-Envie o comando /newbot e siga as instruções para definir nome e username.
-
-Copie o API Token fornecido.
-
-No n8n, vá em Credentials -> Add Credential -> Telegram API.
-
-Preencha o campo Access Token e salve. Vincule esta credencial aos nós de Trigger e Envio.
+1.	No Telegram, converse com o @BotFather.
+2.	Envie o comando /newbot e siga as instruções para definir nome e username.
+3.	Copie o API Token fornecido.
+4.	No n8n, vá em Credentials -> Add Credential -> Telegram API.
+5.	Preencha o campo Access Token e salve. Vincule esta credencial aos nós de Trigger e Envio.
 
 2. OpenWeather API
 
-Crie uma conta em OpenWeatherMap.
-
-Gere uma API Key no painel da sua conta (My API Keys).
-
-No n8n, abra o nó "Configurações Iniciais" e substitua o valor SUA_API_AQUI pela sua chave real.
-
+1.	Crie uma conta em OpenWeatherMap.
+2.	Gere uma API Key no painel da sua conta (My API Keys).
+3.	No n8n, abra o nó "Configurações Iniciais" e substitua o valor SUA_API_AQUI pela sua chave real.
 3. Google Gemini (Opcional)
-
-Obtenha sua chave de API no Google AI Studio.
-
-No n8n, crie uma credencial do tipo Google Gemini(PaLM) API.
-
-Insira sua chave e associe a credencial ao nó "Google Gemini Chat Model".
+1.	Obtenha sua chave de API no Google AI Studio.
+2.	No n8n, crie uma credencial do tipo Google Gemini(PaLM) API.
+3.	Insira sua chave e associe a credencial ao nó "Google Gemini Chat Model".
 
 ⚙️ Variáveis Esperadas
-
-Variável
-
-Descrição
-
-OPENWEATHER_API_KEY
-
-Chave de acesso à API OpenWeather
-
-TELEGRAM_BOT_TOKEN
-
-Token de autenticação do Bot Telegram
+Variável	              Descrição
+OPENWEATHER_API_KEY	    Chave de acesso à API OpenWeather
+TELEGRAM_BOT_TOKEN	    Token de autenticação do Bot Telegram
 
 🌐 Publicar o workflow (Obrigatório)
 
 Para que o bot funcione em tempo real (webhook):
-
-Abra o workflow no n8n.
-
-No canto superior direito, ative a chave Active (ou clique em Publish).
-
-Certifique-se de que o workflow aparece com o status "Active" na sua lista.
+1.	Abra o workflow no n8n.
+2.	No canto superior direito, ative a chave Active (ou clique em Publish).
+3.	Certifique-se de que o workflow aparece com o status "Active" na sua lista.
 
 🎮 Como usar o chatbot
 
 Inicie uma conversa com seu bot no Telegram e envie o nome da cidade:
-
-Formato recomendado: Cidade, UF ou apenas Cidade.
-
-Exemplos: Londrina, PR, São Paulo.
+•	Formato recomendado: Cidade, UF ou apenas Cidade.
+•	Exemplos: Londrina, PR, São Paulo.
 
 Exemplos de Resposta:
-
-Sucesso: "Bom dia! Em Londrina, o tempo está ensolarado e a temperatura registra 26°C. Um dia agradável! 🌤️"
-
-Erro: "❌ Cidade não encontrada ou fora do Brasil. Use o formato Cidade, UF (ex.: São Paulo, SP)."
-
-🛠️ Solução de Problemas (Troubleshooting)
-
-Erro 401 (Unauthorized): Verifique se o token da OpenWeather no nó de "Configurações Iniciais" está correto.
-
-Erro 404 (Not Found): O bot está configurado apenas para o Brasil. Verifique se a cidade informada é brasileira.
-
-O bot não responde: Verifique se o workflow está em modo Active. No modo "Test", ele só responde enquanto você clica manualmente em executar.
+•	Sucesso: "Bom dia! Em Londrina, o tempo está ensolarado e a temperatura registra 26°C. Um dia agradável! 🌤️"
+•	Erro: "❌ Cidade não encontrada ou fora do Brasil. Use o formato Cidade, UF (ex.: São Paulo, SP)."
 
 ✅ Observações Finais
-
-Segurança: O arquivo JSON exportado não contém chaves de API reais por segurança.
-
-Desenvolvido como critério de avaliação para a Pós-Graduação - 2026.
+•	Segurança: O arquivo JSON exportado não contém chaves de API reais por segurança.
+•	Desenvolvido como critério de avaliação para a Pós-Graduação - 2026.
