@@ -46,12 +46,15 @@ Para criar seu bot e obter o token:
 1.	Crie uma conta em OpenWeatherMap.
 2.	Gere uma API Key no painel da sua conta (My API Keys).
 3.	No n8n, abra o nó "Configurações Iniciais" e substitua o valor SUA_API_AQUI pela sua chave real.
-3. Google Gemini (Opcional)
+
+3. Google Gemini
+
 1.	Obtenha sua chave de API no Google AI Studio.
 2.	No n8n, crie uma credencial do tipo Google Gemini(PaLM) API.
 3.	Insira sua chave e associe a credencial ao nó "Google Gemini Chat Model".
 
 ⚙️ Variáveis Esperadas
+
 Variável	              Descrição
 OPENWEATHER_API_KEY	    Chave de acesso à API OpenWeather
 TELEGRAM_BOT_TOKEN	    Token de autenticação do Bot Telegram
@@ -76,3 +79,4 @@ Exemplos de Resposta:
 ✅ Observações Finais
 •	Segurança: O arquivo JSON exportado não contém chaves de API reais por segurança.
 •	Desenvolvido como critério de avaliação para a Pós-Graduação - 2026.
+
