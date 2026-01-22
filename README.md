@@ -54,10 +54,9 @@ Para criar seu bot e obter o token:
 3.	Insira sua chave e associe a credencial ao nó "Google Gemini Chat Model".
 
 ⚙️ Variáveis Esperadas
-
-Variável	              Descrição
-OPENWEATHER_API_KEY	    Chave de acesso à API OpenWeather
-TELEGRAM_BOT_TOKEN	    Token de autenticação do Bot Telegram
+       
+• OPENWEATHER_API_KEY - Chave de acesso à API OpenWeather
+• TELEGRAM_BOT_TOKEN - Token de autenticação do Bot Telegram
 
 🌐 Publicar o workflow (Obrigatório)
 
@@ -79,5 +78,6 @@ Exemplos de Resposta:
 ✅ Observações Finais
 •	Segurança: O arquivo JSON exportado não contém chaves de API reais por segurança.
 •	Desenvolvido como critério de avaliação para a Pós-Graduação - 2026.
+
 
 
