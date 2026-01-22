@@ -1,0 +1,378 @@
+{
+  "name": "MeteoroBR- Agente Climático - Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "19f23dac-e210-4278-b650-aec55ed4670a",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -5328,
+        -48
+      ],
+      "webhookId": "8b2c4d11-b8a9-462e-852e-be3bbbc11809",
+      "credentials": {
+        "telegramApi": {
+          "id": "g3MTk77uwpTosHJp",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "config-api-key",
+              "name": "OPENWEATHER_API_KEY",
+              "value": "SUA_API_AQUI",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1ca219cd-5e7f-416a-a377-93fcdb003bef",
+      "name": "Configurações Iniciais",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5104,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-queue",
+              "name": "queue",
+              "value": "={{ $('Telegram Trigger').item.json.message.text.toLowerCase().trim().normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g, \"\") }}",
+              "type": "string"
+            },
+            {
+              "id": "set-chatid",
+              "name": "chat_id",
+              "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fdde9996-de84-4a47-932f-9420d175d797",
+      "name": "Captura e Formatação",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4880,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.queue }}"
+            },
+            {
+              "name": "units",
+              "value": "metric"
+            },
+            {
+              "name": "lang",
+              "value": "pt_br"
+            },
+            {
+              "name": "appid",
+              "value": "={{ $('Configurações Iniciais').item.json.OPENWEATHER_API_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b49eaee9-4d6b-4548-ac15-e278eda1016c",
+      "name": "OpenWeather HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4656,
+        -48
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "check-200",
+              "leftValue": "={{ $json.cod }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "check-country",
+              "leftValue": "={{ $json.sys.country }}",
+              "rightValue": "BR",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d0860f8a-c977-4c48-955f-93757938f8ed",
+      "name": "IF Sucesso",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4448,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Captura e Formatação').item.json.chat_id }}",
+        "text": "❌ *Cidade não encontrada ou fora do Brasil.*\n\nPor favor, use o formato: **Cidade, UF** (ex: São Paulo, SP).\n\n_Nota: Meus sensores operam apenas no território brasileiro!_ 🇧🇷",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "93d8e7a9-33e4-47bf-a547-649b593a8683",
+      "name": "Erro: Não Encontrada",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        -4224,
+        160
+      ],
+      "webhookId": "1175a337-5eb1-4210-9ccf-d21fba59aceb",
+      "credentials": {
+        "telegramApi": {
+          "id": "g3MTk77uwpTosHJp",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fallback-msg",
+              "name": "fallback_message",
+              "value": "=🌤️ A temperatura em {{ $json.name }} é de {{ Math.round($json.main.temp) }}°C.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "91696052-a64c-4ef3-bd9a-741c0d2d4fe8",
+      "name": "Extração e Fallback",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4224,
+        -176
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "id": "f24e6413-cb87-436a-b310-9aad25dbd9c8",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -4000,
+        48
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ri1b4d2c76Bqa4EN",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Captura e Formatação').item.json.chat_id }}",
+        "text": "={{ ($node[\"IA Gemini\"].json.text || $json.fallback_message).replace(/<br\\s*\\/?>/gi, '\\n') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "2d2a30a6-dbc8-4dc6-8d7a-ce8a6b754902",
+      "name": "Enviar Resposta Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        -3680,
+        -192
+      ],
+      "webhookId": "0812762b-a97c-4982-8f58-d059060944d7",
+      "credentials": {
+        "telegramApi": {
+          "id": "g3MTk77uwpTosHJp",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# IDENTIDADE E OBJETIVO\nVocê é o \"MeteoroBR\", um assistente meteorológico amigável e profissional. Sua tarefa é transformar os dados técnicos recebidos em uma saudação calorosa e direta para o Telegram.\n\n# DADOS ATUAIS (Fonte de Verdade)\nData/Hora: {{ $now.setZone('America/Sao_Paulo').toFormat('dd/MM/yyyy - HH:mm') }}\nMensagem Técnica: {{ $json.fallback_message }}\n\n# REGRAS DE ESTILO (MODELO OBRIGATÓRIO)\nSua resposta deve seguir estritamente este tom de voz:\n\"Bom dia/tarde! Em [Cidade], o tempo está [Condição] e a temperatura registra [X]°C. Um dia agradável! 🌤️\"\n\n# RESTRIÇÕES CRÍTICAS\n1. Retorne APENAS o texto final da mensagem.\n2. NUNCA dê opções ou listas. Escolha a melhor frase e envie.\n3. PROIBIDO usar introduções como \"Aqui está sua previsão\" ou \"Com certeza\".\n4. Mantenha a precisão da temperatura informada nos dados.\n5. Use apenas 1 ou 2 emojis para manter a sobriedade.\n\n# FORMATO HTML (TELEGRAM)\n- Use <b>texto</b> para negrito se necessário.\n- NÃO use Markdown (asteriscos ou cerquilhas).\n- NÃO use tags <br> ou <p>. Use quebras de linha reais (Enter)."
+      },
+      "id": "465d961f-0ae6-4895-b37f-a7c18b435c11",
+      "name": "IA Gemini",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        -4000,
+        -176
+      ],
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Configurações Iniciais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configurações Iniciais": {
+      "main": [
+        [
+          {
+            "node": "Captura e Formatação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Captura e Formatação": {
+      "main": [
+        [
+          {
+            "node": "OpenWeather HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenWeather HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "IF Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Sucesso": {
+      "main": [
+        [
+          {
+            "node": "Extração e Fallback",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Erro: Não Encontrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extração e Fallback": {
+      "main": [
+        [
+          {
+            "node": "IA Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "IA Gemini",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA Gemini": {
+      "main": [
+        [
+          {
+            "node": "Enviar Resposta Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "saveDataSuccessExecution": "all",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "45ad8fb1-b82d-4d1d-bd0b-2a8bccafb58b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b22f78f5e071f2138885272bcc7277a2a19acd71e2e27d6ddcf24af45991863c"
+  },
+  "id": "dQZvYgbera0mr3UIuc7PC",
+  "tags": []
+}
